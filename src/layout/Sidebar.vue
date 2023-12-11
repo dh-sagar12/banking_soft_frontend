@@ -16,9 +16,18 @@ const rail = ref(false);
     <v-divider></v-divider>
 
     <v-list density="compact" nav>
-      <v-list-item prepend-icon="mdi-home-city" title="Home" value="home"></v-list-item>
+      <router-link :to="`/frontdesk/profile`" active-class="active_link">
+        <v-list-item prepend-icon="mdi-account-card-outline" title="New Profile" value="new_memeber"></v-list-item>
+      </router-link>
       <v-list-item prepend-icon="mdi-account" title="My Account" value="account"></v-list-item>
       <v-list-item prepend-icon="mdi-account-group-outline" title="Users" value="users"></v-list-item>
     </v-list>
   </v-navigation-drawer>
 </template>
+
+<style scoped>
+.active_link {
+  color: rgb(0, 17, 255);
+
+}
+</style>

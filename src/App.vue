@@ -1,34 +1,41 @@
 <script setup lang="ts">
 import Sidebar from "./layout/Sidebar.vue";
 import Navigation from "./layout/NavHeader.vue";
-import LoginForm from '@/components/auth/LoginForm.vue';
-import { computed } from "vue";
 import { onMounted } from "vue";
 import APIHandlers from '@/utils/APIHandlers';
 import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { inject } from "vue";
 
-
-
+const router = useRouter();
 const isAuthenticated = ref(false)
+const bus: any = inject('$bus')
+
+
+bus.$on("user-authorized", (value: boolean) => {
+  isAuthenticated.value = value
+});
 
 onMounted(() => {
-  console.log('looking for the api');
 
   // check whether the session is active or not  and route to the authenticate page if session not found else redirect to dashboard
-
   APIHandlers.get('/users/current_user/').then(response => {
     if (response.status == 200) {
       isAuthenticated.value = true
+      if (router.currentRoute.value.path == '/auth/login') {
+        isAuthenticated.value = false
+      }
 
     }
-
   }).catch(error => {
-
+    isAuthenticated.value = false
+    router.currentRoute.value.path == '/auth/login'
+      ? router.push('/auth/login')
+      : router.push({ path: '/auth/login', query: { 'return': router.currentRoute.value.path } })
 
   })
 
 })
-
 
 </script>
 
@@ -54,6 +61,6 @@ onMounted(() => {
   </v-card>
 
   <div v-else class="bg-blue-100 flex justify-center items-center" style="height: 100vh;">
-    <LoginForm />
+    <router-view></router-view>
   </div>
 </template>

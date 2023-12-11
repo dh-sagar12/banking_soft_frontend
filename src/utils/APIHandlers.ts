@@ -3,15 +3,13 @@ import axios from 'axios';
 
 
 const jwt = localStorage.getItem('authToken')
-console.log(jwt);
-
 const api = axios.create({
     baseURL: 'http://127.0.0.1:8080/api/v1',
     timeout: 10000,
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${jwt}`,
+        'Authorization': `${jwt}`,
     },
 });
 
@@ -25,6 +23,7 @@ class ApiHandler {
     async get(url: string, params: object = {}) {
         try {
             const response = await api.get(url, { params });
+
             return response.data;
         } catch (error) {
             throw this.handleError(error);
@@ -35,6 +34,7 @@ class ApiHandler {
     async post(url: string, data: object) {
         try {
             const response = await api.post(url, data);
+
             return response.data;
         } catch (error) {
             throw this.handleError(error);
@@ -69,6 +69,23 @@ class ApiHandler {
             throw this.handleError(error);
         }
     }
+
+    // POST without Bearer Token 
+
+    async postWithoutBearer(url: string, data: object) {
+        try {
+            const response = await api.post(url, data, {
+                headers: {
+                    'Authorization': null,
+                }
+            });
+
+            return response;
+        } catch (error) {
+            throw this.handleError(error);
+        }
+    }
+
 
 
     // PUT request
