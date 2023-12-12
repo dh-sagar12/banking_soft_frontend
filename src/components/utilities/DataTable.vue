@@ -15,11 +15,13 @@
             </tr>
         </tbody>
     </v-table>
+    <div v-if="show_pagination && total_page > 1" class="md:flex md:justify-end md:mt-7">
+        <v-pagination :length="total_page" @update:model-value="paginate"></v-pagination>
+    </div>
 </template>
 <script setup lang="ts">
-import { reactive } from 'vue';
 import CaseConvert from '@/utils/CaseConvert'
 
-const props = defineProps(['data_columns', 'data_set', 'height'])
+const props = defineProps(['data_columns', 'data_set', 'height', 'show_pagination', 'total_page', 'current_page', 'paginate'])
 
 </script>
