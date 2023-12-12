@@ -1,6 +1,7 @@
 <template>
     <h1 class="text-2xl py-4 text-blue-900">Profile Registration</h1>
 
+
     <div class="flex justify-between">
 
         <router-link to="/frontdesk/profile/new">

@@ -51,7 +51,7 @@ onMounted(() => {
         <Navigation></Navigation>
         <!-- Top Navigation bar  -->
 
-        <div class="border shadow-md bg-white border-gray-100 m-4 p-4" style="height: 90vh">
+        <div class="border shadow-md bg-white border-gray-100 m-4 p-4" style="height: 90vh; overflow-y: scroll;">
           <router-view></router-view>
 
         </div>
