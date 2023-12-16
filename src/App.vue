@@ -2,15 +2,15 @@
 import Sidebar from "./layout/Sidebar.vue";
 import Navigation from "./layout/NavHeader.vue";
 import { onMounted } from "vue";
-import APIHandlers from '@/utils/APIHandlers';
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { inject } from "vue";
+import ApiHandler from "./utils/APIHandlers";
 
 const router = useRouter();
 const isAuthenticated = ref(false)
 const bus: any = inject('$bus')
-
+const APIHandlers  = new ApiHandler()
 
 bus.$on("user-authorized", (value: boolean) => {
   isAuthenticated.value = value

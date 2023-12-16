@@ -1,7 +1,7 @@
 
 <template>
     <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
+        <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 ">
             <img class="w-8 h-8 mr-2" src="https://cdn.icon-icons.com/icons2/3005/PNG/512/vue_js_icon_188136.png"
                 alt="logo">
             CBS
@@ -9,12 +9,12 @@
         <div
             class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
                     Sign in to your account
                 </h1>
                 <form class="space-y-4 md:space-y-6" action="#" @submit.prevent="handleLogin">
                     <div>
-                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
+                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 ">Your
                             email</label>
                         <input type="email" name="email" id="email" v-model="email"
                             class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:outline-none block w-full p-2.5"
@@ -54,7 +54,7 @@
 </template>
 
 <script lang="ts" setup>
-import APIHandlers from '@/utils/APIHandlers';
+import ApiHandler from '@/utils/APIHandlers';
 import { ref } from 'vue';
 import { inject } from 'vue';
 import { onMounted } from 'vue';
@@ -72,6 +72,7 @@ const branch_id = ref<number>(0)
 const invalidBranch = ref<boolean>(false)
 const toast = useToast();
 const bus: any = inject("$bus")
+const APIHandlers =  new ApiHandler()
 
 
 onMounted(() => {
@@ -100,20 +101,26 @@ const handleLogin = () => {
     }
 
     if (branch_id.value > 0)
-        APIHandlers.postWithoutBearer('/login', login_payload).then(response => {
-            localStorage.setItem('authToken', response.headers.authorization)
-            if (response.status == 200) {
-                toast.success('User Login successfully')
-                bus.$emit("user-authorized", true);
-                router.currentRoute.value.query.return ? router.push({ path: router.currentRoute.value.query.return.toString() }) : router.push('/')
-            }
-
-
-        }).catch(err => {
-            console.log(err);
-            toast.error('Invalid Credentials')
-        })
-
+        APIHandlers.postWithoutBearer('/login', login_payload)
+            .then((response: any) => {
+                return new Promise((resolve, reject) => {
+                    console.log('auth token', response.headers.authorization);
+                    
+                    localStorage.setItem('authToken', response.headers.authorization);
+                    resolve(response);
+                });
+            })
+            .then((response: any) => {
+                if (response.status == 200) {
+                    toast.success('User Login successfully');
+                    bus.$emit("user-authorized", true);
+                    router.currentRoute.value.query.return ? router.push({ path: router.currentRoute.value.query.return.toString() }) : router.push('/');
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                toast.error('Invalid Credentials');
+            });
 
 
 

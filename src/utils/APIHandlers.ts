@@ -2,27 +2,41 @@
 import axios from 'axios';
 
 
-const jwt = localStorage.getItem('authToken')
-const api = axios.create({
-    baseURL: 'http://127.0.0.1:8080/api/v1',
-    timeout: 10000,
-    withCredentials: true,
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `${jwt}`,
-    },
-});
+
+// const api = axios.create({
+//     baseURL: 'http://127.0.0.1:8080/api/v1',
+//     timeout: 10000,
+//     withCredentials: true,
+//     headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': `${getAuthenticationToken()}`,
+//     },
+// });
 
 
 
 class ApiHandler {
+    api: any;
 
     constructor() {
+        this.api  =  axios.create({
+            baseURL: 'http://127.0.0.1:8080/api/v1',
+            timeout: 10000,
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `${this.getAuthenticationToken()}`,
+            },
+        })
+    }
+
+    getAuthenticationToken() {
+        return localStorage.getItem('authToken')
     }
     // GET request
     async get(url: string, params: object = {}) {
         try {
-            const response = await api.get(url, { params });
+            const response = await this.api.get(url, { params });
 
             return response.data;
         } catch (error) {
@@ -33,7 +47,7 @@ class ApiHandler {
     // POST request
     async post(url: string, data: object) {
         try {
-            const response = await api.post(url, data);
+            const response = await this.api.post(url, data);
 
             return response.data;
         } catch (error) {
@@ -57,7 +71,7 @@ class ApiHandler {
                 }
             }
 
-            const response = await api.post(url, formData, {
+            const response = await this.api.post(url, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data', // Set the content type for file upload
                 },
@@ -74,7 +88,7 @@ class ApiHandler {
 
     async postWithoutBearer(url: string, data: object) {
         try {
-            const response = await api.post(url, data, {
+            const response = await this.api.post(url, data, {
                 headers: {
                     'Authorization': null,
                 }
@@ -91,7 +105,7 @@ class ApiHandler {
     // PUT request
     async put(url: string, data: object) {
         try {
-            const response = await api.put(url, data);
+            const response = await this.api.put(url, data);
             return response.data;
         } catch (error) {
             throw this.handleError(error);
@@ -101,7 +115,7 @@ class ApiHandler {
     // PUT request
     async patch(url: string, data: object) {
         try {
-            const response = await api.patch(url, data);
+            const response = await this.api.patch(url, data);
             return response.data;
         } catch (error) {
             throw this.handleError(error);
@@ -111,7 +125,7 @@ class ApiHandler {
     // DELETE request
     async delete(url: string) {
         try {
-            const response = await api.delete(url);
+            const response = await this.api.delete(url);
             return response.data;
         } catch (error) {
             throw this.handleError(error);
@@ -121,7 +135,7 @@ class ApiHandler {
     async promises(urls: string[]) {
         try {
             // Create an array of promises for each URL
-            const promises = urls.map((url) => api.get(url));
+            const promises = urls.map((url) => this.api.get(url));
 
             // Use axios.all() to resolve all promises simultaneously
             const responses = await axios.all(promises);
@@ -146,4 +160,4 @@ class ApiHandler {
 
 }
 
-export default new ApiHandler();
+export default ApiHandler;

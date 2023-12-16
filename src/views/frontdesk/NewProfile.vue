@@ -166,7 +166,7 @@
 
 <script lang="ts" setup>
 import DataTable from '@/components/utilities/DataTable.vue';
-import APIHandlers from '@/utils/APIHandlers';
+import ApiHandler from '@/utils/APIHandlers';
 import RedirectLoginPage from '@/utils/RedirectLoginPage';
 import { watch } from 'vue';
 import { onMounted } from 'vue';
@@ -271,6 +271,7 @@ const mn_vdc = ref()
 const ward_no = ref()
 const street = ref('')
 const tole_name = ref('')
+const APIHandlers =  new ApiHandler()
 
 
 

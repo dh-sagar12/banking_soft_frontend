@@ -36,7 +36,7 @@
 <script setup lang="ts">
 
 import DataTable from '@/components/utilities/DataTable.vue'
-import APIHandlers from '@/utils/APIHandlers';
+import ApiHandler from '@/utils/APIHandlers';
 import getBranches from '@/utils/FetchBranches';
 import { watchEffect } from 'vue';
 import { onMounted } from 'vue';
@@ -57,6 +57,8 @@ const per_page_items = ref<number>(10)
 const customer_data = ref<any>([])
 const total_page = ref<number>(0)
 const all_branches = ref<any>([])
+const APIHandlers =  new ApiHandler()
+
 
 onMounted(async () => {
     let branches = await getBranches()
@@ -69,11 +71,11 @@ onMounted(async () => {
 
         total_page.value = response.total_pages
         paginated_page.value = response.current_page
-        let table_data = response.data.map((item: any) => {
+        let table_data = response.data.map((item: any) => {            
             let branch = branches.data.filter((branch: any) => branch.id == item.customer.branch_id)[0]
             let contact = item.kyc_contacts.filter((item: any) => item.contact_relation == 'self')
             return {
-                id: item.id,
+                id: item.customer.id,
                 profile_id: item.customer.profile_id,
                 branch: `${branch.nickname}(${branch.branch_code})`,
                 registration_date: item.customer.introduced_date,
@@ -83,8 +85,7 @@ onMounted(async () => {
                 date_of_birth: item.kyc_personal.date_of_birth
             }
         })
-        customer_data.value = table_data
-        console.log(table_data);
+        customer_data.value = table_data        
 
 
     }).catch(err => {
@@ -120,7 +121,6 @@ watchEffect(() => {
             }
         })
         customer_data.value = table_data
-        console.log(table_data);
 
 
     }).catch(err => {
@@ -128,10 +128,5 @@ watchEffect(() => {
 
     })
 })
-
-const handleEditIconClick = () => {
-    console.log('edit ');
-
-}
 
 </script>
