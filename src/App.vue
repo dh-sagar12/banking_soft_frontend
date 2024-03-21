@@ -25,7 +25,6 @@ onMounted(() => {
       if (router.currentRoute.value.path == '/auth/login') {
         isAuthenticated.value = false
       }
-
     }
   }).catch(error => {
     isAuthenticated.value = false
